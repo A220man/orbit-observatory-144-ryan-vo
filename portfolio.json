@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "name": "orbit-observatory-144-ryan-vo",
+  "owner": "A220man",
+  "email": "ryandtvo@gmail.com",
+  "domain": "AI/ML developer tools",
+  "summary": "Work in progress: orbit-observatory-144-ryan-vo",
+  "workflows": [
+    "Compress message ranges into anchored summaries with token counting and protected zone preservation",
+    "Detect sustained mass fold-coverage loss and gracefully degrade by resetting dead fold state or short-circuiting doomed compression",
+    "Intercept TRAE Code native compression commands and route through ACP with configurable traeCompact flag",
+    "Recover compression state on DSH fork/clone via snapshot retry and fold block inheritance",
+    "Preview compression ranges with dry-run mode showing validation errors, excluded protected refs, and estimated token savings"
+  ],
+  "auth": "oidc-keycloak-saml-broker",
+  "llm_providers": [
+    "openai-compatible",
+    "anthropic",
+    "gemini",
+    "ollama"
+  ],
+  "status": "work-in-progress"
+}
