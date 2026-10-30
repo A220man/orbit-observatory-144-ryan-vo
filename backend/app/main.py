@@ -1,10 +1,11 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from backend.app.core.config import settings
-from backend.app.api.health import router as health_router
-from backend.app.api.compression import router as compression_router
-from backend.app.api.auth import router as auth_router
-from backend.app.services.database import init_db, close_db
+from app.core.config import settings
+from app.api.health import router as health_router
+from app.api.compression import router as compression_router
+from app.api.auth import router as auth_router
+from app.api.sessions import router as sessions_router
+from app.services.database import init_db, close_db
 
 
 @asynccontextmanager
@@ -25,6 +26,7 @@ def create_app() -> FastAPI:
     app.include_router(health_router, prefix="/api", tags=["health"])
     app.include_router(compression_router, prefix="/api", tags=["compression"])
     app.include_router(auth_router, prefix="/api", tags=["auth"])
+    app.include_router(sessions_router, prefix="/api", tags=["sessions"])
 
     return app
 

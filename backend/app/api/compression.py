@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from sqlalchemy.ext.asyncio import AsyncSession
-from backend.app.services.database import get_session
-from backend.app.services.compression import (
+from app.services.database import get_db_session
+from app.services.compression import (
     compress_range,
     decompress_range,
     search_context,
@@ -49,6 +49,7 @@ class CompressResponse(BaseModel):
     error: Optional[str] = None
     ranges: List[Dict[str, Any]] = []
 
+
 class DecompressResponse(BaseModel):
     success: bool
     content: Optional[str] = None
@@ -83,7 +84,7 @@ class PreviewCompressionResponse(BaseModel):
 @router.post("/compress", response_model=CompressResponse)
 async def compress(
     request: CompressRequest,
-    session: AsyncSession = Depends(get_session),
+    session: AsyncSession = Depends(get_db_session),
 ):
     if request.dry_run:
         result = await preview_compression(session, request.session_id, request.start_ref, request.end_ref, request.summary)
@@ -99,7 +100,7 @@ async def compress(
 @router.post("/decompress", response_model=DecompressResponse)
 async def decompress(
     request: DecompressRequest,
-    session: AsyncSession = Depends(get_session),
+    session: AsyncSession = Depends(get_db_session),
 ):
     result = await decompress_range(session, request.session_id, request.ref)
     if not result["success"]:
@@ -110,7 +111,7 @@ async def decompress(
 @router.post("/search", response_model=SearchResponse)
 async def search(
     request: SearchRequest,
-    session: AsyncSession = Depends(get_session),
+    session: AsyncSession = Depends(get_db_session),
 ):
     result = await search_context(session, request.session_id, request.query, request.limit)
     if not result["success"]:
@@ -121,7 +122,7 @@ async def search(
 @router.post("/acp_status", response_model=ACPStatusResponse)
 async def acp_status(
     request: ACPStatusRequest,
-    session: AsyncSession = Depends(get_session),
+    session: AsyncSession = Depends(get_db_session),
 ):
     result = await get_acp_status(session, request.session_id)
     if not result["success"]:
@@ -132,7 +133,7 @@ async def acp_status(
 @router.post("/acp_cache", response_model=ACPCacheResponse)
 async def acp_cache(
     request: ACPStatusRequest,
-    session: AsyncSession = Depends(get_session),
+    session: AsyncSession = Depends(get_db_session),
 ):
     result = await get_acp_cache(session, request.session_id)
     if not result["success"]:

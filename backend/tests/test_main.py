@@ -1,10 +1,10 @@
 import pytest
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-from backend.app.main import create_app
-from backend.app.services.database import Base, get_session
-from backend.app.models import Session, Message, Fold, User, AuditLog
-from backend.app.services.auth import _hash_password
+from app.main import create_app
+from app.services.database import Base, get_session
+from app.models import Session, Message, Fold, User, AuditLog
+from app.services.auth import _hash_password
 import uuid
 
 pytestmark = pytest.mark.asyncio

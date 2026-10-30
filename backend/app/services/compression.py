@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import List, Dict, Any, Optional
-from backend.app.models import Session, Message, Fold, AuditLog
+from app.models import Session, Message, Fold, AuditLog
 import hashlib
 
 

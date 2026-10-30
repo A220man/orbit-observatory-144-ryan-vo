@@ -1,8 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import Dict, Any, Optional
-from backend.app.models import User
-from backend.app.core.config import settings
+from app.models import User
+from app.core.config import settings
 from fastapi import HTTPException, status
 from jose import jwt
 import hashlib
