@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
-from backend.app.core.config import settings
+from app.core.config import settings
 
 
 class Base(DeclarativeBase):
@@ -19,7 +19,10 @@ async def init_db() -> None:
 async def close_db() -> None:
     await engine.dispose()
 
-
-async def get_session() -> AsyncSession:
+async def get_db_session() -> AsyncSession:
     async with async_session_maker() as session:
         yield session
+
+
+# Backward compatibility for tests
+get_session = get_db_session

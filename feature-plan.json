@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "current_feature": "skeleton",
+  "current_feature": "context-compression-core",
   "features": [
     {
       "id": "skeleton",
       "title": "FastAPI/React skeleton with install instructions and tests",
-      "status": "in_progress",
+      "status": "done",
       "acceptance": [
         "Backend FastAPI app starts and serves /health",
         "Frontend React+Vite+TS builds and runs",
@@ -13,13 +13,31 @@
         "README has install/run/test steps",
         "Backend and frontend tests pass"
       ],
-      "implementation": [],
-      "tests": []
+      "implementation": [
+        "backend/app/main.py",
+        "backend/app/api/health.py",
+        "backend/app/api/compression.py",
+        "backend/app/api/auth.py",
+        "backend/app/services/compression.py",
+        "backend/app/services/auth.py",
+        "backend/app/services/database.py",
+        "backend/app/models/__init__.py",
+        "backend/app/core/config.py",
+        "frontend/src/App.tsx",
+        "frontend/src/components/SessionDashboard.tsx",
+        "frontend/src/components/CompressionPanel.tsx",
+        "frontend/src/hooks/useAuth.tsx"
+      ],
+      "tests": [
+        "backend/tests/test_main.py",
+        "frontend/src/__tests__/compression.test.tsx",
+        "frontend/src/__tests__/auth.test.tsx"
+      ]
     },
     {
       "id": "context-compression-core",
       "title": "Core context compression engine with fold/unfold",
-      "status": "planned",
+      "status": "done",
       "acceptance": [
         "Compress tool folds message ranges into summaries",
         "Decompress tool restores folded content",
@@ -27,8 +45,17 @@
         "ACP cache/status tools work",
         "Deterministic offline core (no LLM required)"
       ],
-      "implementation": [],
-      "tests": []
+      "implementation": [
+        "backend/app/services/compression.py",
+        "backend/app/api/compression.py",
+        "backend/app/api/sessions.py",
+        "backend/app/models/__init__.py",
+        "backend/tests/test_main.py"
+      ],
+      "tests": [
+        "backend/tests/test_main.py::TestCompression",
+        "frontend/src/__tests__/compression.test.tsx"
+      ]
     },
     {
       "id": "oidc-auth",

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { SessionDashboard } from './components/SessionDashboard'
 import { CompressionPanel } from './components/CompressionPanel'
 import { AuthProvider, useAuth } from './hooks/useAuth'

@@ -4,13 +4,13 @@ Each round completes one feature or repair. Future items are planned, not implem
 
 ## Current round
 
-skeleton
+context-compression-core
 
 ## Roadmap
 
 ### skeleton — FastAPI/React skeleton with install instructions and tests
 
-Status: in_progress
+Status: done
 
 Acceptance:
 - Backend FastAPI app starts and serves /health
@@ -19,9 +19,13 @@ Acceptance:
 - README has install/run/test steps
 - Backend and frontend tests pass
 
+Implementation: `backend/app/main.py`, `backend/app/api/health.py`, `backend/app/api/compression.py`, `backend/app/api/auth.py`, `backend/app/services/compression.py`, `backend/app/services/auth.py`, `backend/app/services/database.py`, `backend/app/models/__init__.py`, `backend/app/core/config.py`, `frontend/src/App.tsx`, `frontend/src/components/SessionDashboard.tsx`, `frontend/src/components/CompressionPanel.tsx`, `frontend/src/hooks/useAuth.tsx`
+
+Tests: `backend/tests/test_main.py`, `frontend/src/__tests__/compression.test.tsx`, `frontend/src/__tests__/auth.test.tsx`
+
 ### context-compression-core — Core context compression engine with fold/unfold
 
-Status: planned
+Status: done
 
 Acceptance:
 - Compress tool folds message ranges into summaries
@@ -29,6 +33,10 @@ Acceptance:
 - Search_context finds relevant folded content
 - ACP cache/status tools work
 - Deterministic offline core (no LLM required)
+
+Implementation: `backend/app/services/compression.py`, `backend/app/api/compression.py`, `backend/app/api/sessions.py`, `backend/app/models/__init__.py`, `backend/tests/test_main.py`
+
+Tests: `backend/tests/test_main.py::TestCompression`, `frontend/src/__tests__/compression.test.tsx`
 
 ### oidc-auth — OIDC authentication with Keycloak
 

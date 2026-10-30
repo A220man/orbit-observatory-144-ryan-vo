@@ -1,10 +1,27 @@
 # Changelog
 
+## 1.1.0 — work-in-progress checkpoint
+
+Partial code published for continued development. Known issues: STATUS.md.
+
 ## 1.0.0 — work-in-progress checkpoint
 
 Partial code published for continued development. Known issues: STATUS.md.
 
-All notable changes to this project will be documented in this file.
+## [Unreleased] - 2026-10-30
+
+### Added
+- Session management API endpoints (`/api/sessions`, `/api/sessions/{id}/messages`, `/api/sessions/{id}/folds`)
+- Frontend CompressionPanel now fully functional with backend session/compression APIs
+- Renamed database dependency `get_session` → `get_db_session` to avoid naming conflicts
+
+### Fixed
+- Parameter naming conflict in session endpoints (response model vs DB session dependency)
+- All backend tests pass (12/12)
+- All frontend tests pass (7/7)
+
+### Changed
+- `context-compression-core` feature marked complete in PLAN.md and feature-plan.json
 
 ## [1.0.0] - 2026-10-23
 

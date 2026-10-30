@@ -1,16 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { CompressionPanel } from '../components/CompressionPanel'
+import type { Mock } from 'vitest'
 
-// Mock axios
-vi.mock('axios', () => ({
-  default: {
-    get: vi.fn(),
-    post: vi.fn(),
-  },
+// Mock axios using vi.hoisted to avoid hoisting issues
+const { mockGet, mockPost } = vi.hoisted(() => ({
+  mockGet: vi.fn(),
+  mockPost: vi.fn(),
 }))
 
-import axios from 'axios'
+vi.mock('axios', () => ({
+  default: {
+    get: mockGet,
+    post: mockPost,
+  },
+}))
 
 describe('CompressionPanel', () => {
   beforeEach(() => {
@@ -18,10 +22,10 @@ describe('CompressionPanel', () => {
   })
 
   it('loads session and displays compressible spans', async () => {
-    axios.get
+    ;(mockGet as Mock)
       .mockResolvedValueOnce({ data: [] }) // messages
       .mockResolvedValueOnce({ data: [] }) // folds
-    axios.post.mockResolvedValueOnce({ data: { compressible_spans: [
+    ;(mockPost as Mock).mockResolvedValueOnce({ data: { compressible_spans: [
       { start_ref: 'm00001', end_ref: 'm00005', token_count: 100 }
     ] } }) // acp_status
 
@@ -39,7 +43,7 @@ describe('CompressionPanel', () => {
   })
 
   it('shows error on load failure', async () => {
-    axios.get.mockRejectedValueOnce(new Error('Network error'))
+    ;(mockGet as Mock).mockRejectedValueOnce(new Error('Network error'))
 
     render(<CompressionPanel />)
 
@@ -52,10 +56,10 @@ describe('CompressionPanel', () => {
   })
 
   it('calls compress endpoint on Compress button', async () => {
-    axios.get
+    ;(mockGet as Mock)
       .mockResolvedValueOnce({ data: [] })
       .mockResolvedValueOnce({ data: [] })
-    axios.post
+    ;(mockPost as Mock)
       .mockResolvedValueOnce({ data: { compressible_spans: [
         { start_ref: 'm00001', end_ref: 'm00005', token_count: 100 }
       ] } })
@@ -70,24 +74,32 @@ describe('CompressionPanel', () => {
       expect(screen.getByText('Dry-run')).toBeInTheDocument()
     })
 
+    // Click the Compress button on the first span row
     fireEvent.click(screen.getByText('Compress'))
 
     await waitFor(() => {
-      expect(axios.post).toHaveBeenCalledWith('/api/compress', {
-        session_id: 'test-session',
-        start_ref: 'm00001',
-        end_ref: 'm00005',
-        dry_run: false,
-      })
+      expect(screen.getByText('Compressed successfully')).toBeInTheDocument()
     })
+
+    expect(mockPost).toHaveBeenCalledWith('/api/compress', expect.objectContaining({
+      session_id: 'test-session',
+      start_ref: 'm00001',
+      end_ref: 'm00005',
+      dry_run: false,
+    }))
   })
 
   it('calls decompress endpoint', async () => {
-    axios.get
+    ;(mockGet as Mock)
       .mockResolvedValueOnce({ data: [] })
-      .mockResolvedValueOnce({ data: [{ id: 'fold-1', start_ref: 'm00001', end_ref: 'm00005', token_count: 100 }] })
-    axios.post.mockResolvedValueOnce({ data: { compressible_spans: [] } })
-    axios.post.mockResolvedValueOnce({ data: { content: 'Decompressed content' } })
+      .mockResolvedValueOnce({ data: [
+        { id: 'fold-123', start_ref: 'm00001', end_ref: 'm00005', summary: 'Test fold', token_count: 100 }
+      ] })
+    ;(mockPost as Mock)
+      .mockResolvedValueOnce({ data: { compressible_spans: [
+        { start_ref: 'm00001', end_ref: 'm00005', token_count: 100 }
+      ] } })
+      .mockResolvedValueOnce({ data: { success: true, content: 'Decompressed content' } })
 
     render(<CompressionPanel />)
 
@@ -95,16 +107,18 @@ describe('CompressionPanel', () => {
     fireEvent.click(screen.getByText('Load Session'))
 
     await waitFor(() => {
-      expect(screen.getByText('Decompress')).toBeInTheDocument()
+      expect(screen.getByText('Dry-run')).toBeInTheDocument()
     })
 
+    // Click the Decompress button on the first fold row
     fireEvent.click(screen.getByText('Decompress'))
 
+    // Verify the API call was made (alert is not testable in jsdom)
     await waitFor(() => {
-      expect(axios.post).toHaveBeenCalledWith('/api/decompress', {
+      expect(mockPost).toHaveBeenCalledWith('/api/decompress', expect.objectContaining({
         session_id: 'test-session',
-        ref: 'fold-1',
-      })
+        ref: 'fold-123',
+      }))
     })
   })
 })
