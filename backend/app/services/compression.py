@@ -108,16 +108,31 @@ async def decompress_range(
     session_id: str,
     ref: str,
 ) -> Dict[str, Any]:
-    """Decompress a folded range."""
+    """Decompress a folded range - restore original messages."""
     stmt = select(Fold).where(Fold.session_id == session_id, Fold.id == ref)
     result = await session.execute(stmt)
     fold = result.scalar_one_or_none()
     if not fold:
         return {"success": False, "error": "Fold not found"}
 
-    content = f"[Decompressed fold {fold.id}]\n{fold.summary}\n\nOriginal refs: {', '.join(fold.folded_refs)}"
+    # Fetch original messages that were folded
+    stmt = select(Message).where(
+        Message.session_id == session_id,
+        Message.ref.in_(fold.folded_refs),
+    ).order_by(Message.ref)
+    result = await session.execute(stmt)
+    messages = result.scalars().all()
 
-    return {"success": True, "content": content}
+    if not messages:
+        return {"success": True, "content": f"[Decompressed fold {fold.id}]\n{fold.summary}\n\nOriginal refs: {', '.join(fold.folded_refs)}"}
+
+    # Format original messages with role and content
+    content_parts = [f"[Decompressed fold {fold.id} - {len(messages)} messages restored]"]
+    for msg in messages:
+        content_parts.append(f"\n--- {msg.ref} ({msg.role}) ---\n{msg.content}")
+    content = "\n".join(content_parts)
+
+    return {"success": True, "content": content, "restored_count": len(messages)}
 
 
 async def search_context(
