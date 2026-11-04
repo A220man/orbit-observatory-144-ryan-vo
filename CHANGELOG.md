@@ -1,9 +1,17 @@
 # Changelog
 
+## 1.2.0 — work-in-progress checkpoint
+
+Partial code published for continued development. Known issues: STATUS.md.
+
 ## 1.1.0 — work-in-progress checkpoint
 
 Partial code published for continued development. Known issues: STATUS.md.
 
+### Improved (2026-11-04)
+- Decompress tool now restores actual original messages from fold refs instead of returning formatted summary string
+- Added `restored_count` field to decompress response for better observability
+- Updated backend test to verify original message restoration
 ## 1.0.0 — work-in-progress checkpoint
 
 Partial code published for continued development. Known issues: STATUS.md.

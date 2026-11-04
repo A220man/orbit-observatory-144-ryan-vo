@@ -117,7 +117,10 @@ class TestCompression:
         assert response.status_code == 200
         data = response.json()
         assert data["success"] is True
-        assert "First three messages" in data["content"]
+        assert "Message 1" in data["content"]
+        assert "Message 2" in data["content"]
+        assert "Message 3" in data["content"]
+        assert data.get("restored_count") == 3
 
     async def test_compress_dry_run(self, client, test_session, db_session):
         messages = [
