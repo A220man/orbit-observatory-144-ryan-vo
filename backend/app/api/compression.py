@@ -54,6 +54,7 @@ class DecompressResponse(BaseModel):
     success: bool
     content: Optional[str] = None
     error: Optional[str] = None
+    restored_count: Optional[int] = None
 
 
 class SearchResponse(BaseModel):
