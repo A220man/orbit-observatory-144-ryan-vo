@@ -91,11 +91,16 @@ Acceptance:
 
 ### compress-dryrun — Compress dryRun preview mode
 
-Status: planned
+Status: done
 
 Acceptance:
 - dryRun boolean parameter on compress tool
 - Returns validation errors, excluded protected refs, estimated savings
 - Zero side effects (no ref allocation, no ledger writes)
 - Idempotent repeated calls
+- Dedicated /preview endpoint for explicit dry-run API
+
+Implementation: `backend/app/services/compression.py`, `backend/app/api/compression.py`, `backend/tests/test_main.py`
+
+Tests: `backend/tests/test_main.py::TestCompression::test_compress_dry_run`, `backend/tests/test_main.py::TestCompression::test_preview_compression`
 

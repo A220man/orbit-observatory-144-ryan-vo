@@ -1,6 +1,14 @@
 # Changelog
 
-## 1.3.0 — work-in-progress checkpoint
+## 1.4.0 — work-in-progress checkpoint
+
+Partial code published for continued development. Known issues: STATUS.md.
+
+### Added (2026-11-09)
+- Dedicated `/api/preview` endpoint for explicit dry-run compression preview
+- New test `test_preview_compression` verifying preview API behavior and zero side effects
+- Updated `compress-dryrun` feature marked complete in PLAN.md and feature-plan.json
+
 
 Partial code published for continued development. Known issues: STATUS.md.
 
