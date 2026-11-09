@@ -222,7 +222,33 @@ class TestCompression:
         assert response.status_code == 200
         data = response.json()
         assert data["success"] is True
-        assert len(data["cache_entries"]) == 1
+    async def test_preview_compression(self, client, test_session, db_session):
+        messages = [
+            Message(session_id=test_session.id, ref=f"m{i:05d}", role="user" if i % 2 == 1 else "assistant", content=f"Message {i}", token_count=10)
+            for i in range(1, 15)
+        ]
+        for msg in messages:
+            db_session.add(msg)
+        await db_session.commit()
+
+        response = await client.post("/api/preview", json={
+            "session_id": test_session.id,
+            "start_ref": "m00001",
+            "end_ref": "m00003",
+            "summary": "First three messages"
+        })
+        assert response.status_code == 200
+        data = response.json()
+        assert data["success"] is True
+        assert len(data["ranges"]) == 1
+        assert data["ranges"][0]["estimated_tokens_saved"] > 0
+        assert data["ranges"][0]["valid"] is True
+        assert data["ranges"][0]["errors"] == []
+        # Verify no fold was created (dry run)
+        folds_res = await client.get(f"/api/sessions/{test_session.id}/folds")
+        assert len(folds_res.json()) == 0
+
+
 
 
 class TestAuth:

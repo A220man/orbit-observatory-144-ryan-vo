@@ -140,3 +140,15 @@ async def acp_cache(
     if not result["success"]:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=result.get("error"))
     return result
+
+@router.post("/preview", response_model=PreviewCompressionResponse)
+async def preview(
+    request: CompressRequest,
+    session: AsyncSession = Depends(get_db_session),
+):
+    """Preview compression without committing (dry-run)."""
+    result = await preview_compression(session, request.session_id, request.start_ref, request.end_ref, request.summary)
+    if not result["success"] and result.get("error") not in ("Range fully protected", "No messages in range", "Session not found"):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=result.get("error"))
+    return result
+
