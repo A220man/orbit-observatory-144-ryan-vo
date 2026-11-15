@@ -40,7 +40,7 @@ Tests: `backend/tests/test_main.py::TestCompression`, `frontend/src/__tests__/co
 
 ### oidc-auth — OIDC authentication with Keycloak
 
-Status: planned
+Status: in_progress
 
 Acceptance:
 - Authorization-code flow with PKCE works

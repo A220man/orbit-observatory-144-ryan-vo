@@ -47,3 +47,4 @@ docker-compose.override.yml
 *.sqlite3
 *.sqlite3-wal
 *.sqlite3-shm
+.venv*/
