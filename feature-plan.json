@@ -60,7 +60,7 @@
     {
       "id": "oidc-auth",
       "title": "OIDC authentication with Keycloak",
-      "status": "planned",
+      "status": "in_progress",
       "acceptance": [
         "Authorization-code flow with PKCE works",
         "Backend validates tokens (signature/issuer/audience)",
@@ -144,6 +144,5 @@
         "backend/tests/test_main.py::TestCompression::test_preview_compression"
       ]
     }
-
   ]
 }
