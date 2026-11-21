@@ -1,4 +1,4 @@
-\"\"\"OIDC client implementation for Keycloak-based authentication.\"\"\"
+"""OIDC client implementation for Keycloak-based authentication."""
 
 import secrets
 import base64
@@ -8,13 +8,9 @@ from typing import Dict, Any, Tuple, Optional
 
 import httpx
 
-from authlib.integrations.oauth2 import OAuth2Client
-from authlib.integrations.oauth2.rfc6749.parameters import (
-    generate_code_verifier,
-    generate_code_challenge,
-    CodeChallengeMethod,
-)
-from authlib.integrations.oidc_core import UserInfo
+from authlib.oauth2 import OAuth2Client
+from authlib.oauth2.rfc7636 import create_s256_code_challenge
+from authlib.oidc.core import UserInfo
 from authlib.jose import JsonWebKey
 from authlib.jose.rfc7519 import JsonWebToken
 
@@ -26,8 +22,8 @@ _OIDC_STATE_STORE: Dict[str, Tuple[str, str, str]] = {}
 
 def _generate_pkce() -> Tuple[str, str, str]:
     """Generate PKCE code verifier, challenge, and state."""
-    code_verifier = generate_code_verifier()
-    code_challenge = generate_code_challenge(code_verifier, CodeChallengeMethod.S256)
+    code_verifier = secrets.token_urlsafe(64)
+    code_challenge = create_s256_code_challenge(code_verifier)
     state = secrets.token_urlsafe(16)
     return code_verifier, code_challenge, state
 
@@ -115,4 +111,4 @@ def fetch_jwks(issuer_url: str) -> Dict[str, Any]:
     jwks_url = f"{issuer_url}/protocol/openid-connect/certs"
     resp = httpx.get(jwks_url)
     resp.raise_for_status()
-    return resp.json()\n
+    return resp.json()

@@ -43,11 +43,15 @@ Tests: `backend/tests/test_main.py::TestCompression`, `frontend/src/__tests__/co
 Status: in_progress
 
 Acceptance:
-- Authorization-code flow with PKCE works
-- Backend validates tokens (signature/issuer/audience)
-- HttpOnly SameSite cookies with CSRF protection
-- Role-based access (viewer/operator/admin)
-- Logout works, no hardcoded bypass in production
+- Authorization-code flow with PKCE works [implemented: /auth/login and /auth/callback endpoints]
+- Backend validates tokens (signature/issuer/audience) [using JWT validation via exchange_code]
+- HttpOnly SameSite cookies with CSRF protection [to be implemented]
+- Role-based access (viewer/operator/admin) [mapped via map_keycloak_roles]
+- Logout works, no hardcoded bypass in production [to be implemented]
+
+Implementation: `backend/app/services/oidc.py - OIDC client with PKCE (get_authorization_url, exchange_code)`, `backend/app/services/auth.py - oidc_login function for PKCE flow`, `backend/app/api/auth.py - GET /auth/login and GET /auth/callback endpoints`
+
+Tests: `backend/tests/test_main.py - OIDC callback and login tests to be added`
 
 ### trae-interception — TRAE Code native compression interception
 
