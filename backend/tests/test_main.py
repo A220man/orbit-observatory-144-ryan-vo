@@ -298,3 +298,63 @@ class TestAuth:
     async def test_unauthorized_without_token(self, client):
         response = await client.get("/api/me")
         assert response.status_code == 401
+
+async def test_oidc_login_init(client):
+    """Test /auth/login endpoint returns authorization URL and state."""
+    from unittest.mock import patch
+    
+    # Mock get_authorization_url to return test values
+    with patch("app.api.auth.get_authorization_url") as mock_get_auth_url:
+        mock_get_auth_url.return_value = ("https://example.com/auth?state=test123", "state_xyz")
+        
+        response = await client.get("/api/auth/login")
+        assert response.status_code == 200
+        data = response.json()
+        assert "authorization_url" in data
+        assert "state" in data
+        assert data["authorization_url"] == "https://example.com/auth?state=test123"
+        assert data["state"] == "state_xyz"
+
+
+async def test_oidc_callback_success(client, test_user):
+    """Test /auth/callback endpoint with valid code and state."""
+    from unittest.mock import patch
+    from fastapi import status
+    
+    # Mock oidc_login to return success
+    with patch("app.api.auth.oidc_login") as mock_oidc_login:
+        mock_oidc_login.return_value = {
+            "success": True,
+            "access_token": "mock_access_token",
+            "refresh_token": "mock_refresh_token",
+            "token_type": "bearer",
+            "user_id": test_user.id,
+            "username": test_user.username,
+            "email": test_user.email,
+        }
+        
+        response = await client.get("/api/auth/callback", code="auth_code_123", state="state_xyz")
+        assert response.status_code == 200
+        data = response.json()
+        assert data["success"] == True
+        assert "access_token" in data
+        assert data["token_type"] == "bearer"
+        assert data["user"]["id"] == test_user.id
+
+
+async def test_oidc_callback_failure(client):
+    """Test /auth/callback endpoint with failed token exchange."""
+    from unittest.mock import patch
+    from fastapi import status
+    
+    # Mock oidc_login to return failure
+    with patch("app.api.auth.oidc_login") as mock_oidc_login:
+        mock_oidc_login.return_value = {
+            "success": False,
+            "error": "invalid_code",
+        }
+        
+        response = await client.get("/api/auth/callback", code="bad_code", state="state_xyz")
+        assert response.status_code == 400
+        data = response.json()
+        assert data["detail"] == "invalid_code"
